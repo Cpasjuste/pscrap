@@ -15,33 +15,43 @@ namespace pscrap {
 
     public:
 
+        // TODO: handle tv shows
         enum class Type {
             Movie,
             TvShow
         };
 
+        /// empty search, to be loaded from file with "load"
+        Search() = default;
+
+        /// search for a movie, using curl and json
         explicit Search(const std::string &api_key, const std::string &name,
                         const std::string &language = "en-US", Type type = Type::Movie);
 
-        /// return curl error code
+        /// proceed the search
+        /// return 0 on success, curl error code on error
         int get();
 
-        /// return json string
-        std::string getJson() const;
+        /// load a saved search from a file
+        int load(const std::string &srcPath);
 
-        int page;
-        int total_results;
-        int total_pages;
+        /// save a search to a file
+        int save(const std::string &dstPath);
+
+        int page = 0;
+        int total_results = 0;
+        int total_pages = 0;
         std::vector<Movie> movies;
+        bool found = false;
 
     private:
 
-        void parseMovieRoot();
+        void parseMovieRoot(const std::string &jsonData);
 
         void parseMovie(json_object *obj);
 
-        std::string curl_url;
-        std::string curl_data;
+        std::string url;
+        std::string data;
     };
 }
 

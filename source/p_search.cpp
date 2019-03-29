@@ -3,6 +3,8 @@
 //
 
 #include <cstring>
+#include <p_search.h>
+
 #include "p_search.h"
 #include "p_curl.h"
 
@@ -10,30 +12,77 @@ using namespace pscrap;
 
 Search::Search(const std::string &api_key, const std::string &name, const std::string &language, Type type) {
 
-    curl_url = "https://api.themoviedb.org/3/search/movie?api_key="
-               + api_key + "&language=" + language + "&query=" + name
-               + "&page=1&include_adult=false";
+    url = "https://api.themoviedb.org/3/search/movie?api_key="
+          + api_key + "&language=" + language + "&query=" + name
+          + "&page=1&include_adult=false";
 }
 
 int Search::get() {
 
-    curl_data = Curl::getString(curl_url);
-    if (curl_data.empty()) {
+    data = Curl::getString(url);
+
+    if (data.empty()) {
+        printf("Search::get: error: data is empty\n");
         return -1;
     }
 
-    parseMovieRoot();
+    parseMovieRoot(data);
 
     return 0;
 }
 
-std::string Search::getJson() const {
-    return curl_data;
+int Search::load(const std::string &srcPath) {
+
+    long size = 0;
+    FILE *fp = fopen(srcPath.c_str(), "rb");
+    if (!fp) {
+        printf("Search::load: error: fopen failed\n");
+        return -1;
+    }
+    fseek(fp, 0, SEEK_END);
+    size = ftell(fp);
+    if (size <= 0) {
+        printf("Search::load: error: ftell failed\n");
+        fclose(fp);
+        return -1;
+    }
+    fseek(fp, 0, SEEK_SET);
+    data = std::string((unsigned long) size, '\0');
+    fread(&data[0], sizeof(char), (size_t) size, fp);
+    fclose(fp);
+
+    if (data.empty()) {
+        printf("Search::load: error: data is empty\n");
+        return -1;
+    }
+
+    parseMovieRoot(data);
+
+    return 0;
 }
 
-void Search::parseMovieRoot() {
+int Search::save(const std::string &dstPath) {
 
-    json_object *root = json_tokener_parse(curl_data.c_str());
+    if (!found) {
+        printf("Search::save: error: data is empty\n");
+        return -1;
+    }
+
+    FILE *fp = fopen(dstPath.c_str(), "wb");
+    if (!fp) {
+        printf("Search::save: error: fopen failed\n");
+        return -1;
+    }
+
+    fwrite(data.c_str(), sizeof(char), data.length(), fp);
+    fclose(fp);
+
+    return 0;
+}
+
+void Search::parseMovieRoot(const std::string &jsonData) {
+
+    json_object *root = json_tokener_parse(jsonData.c_str());
     json_object_object_foreach(root, key, obj) {
         enum json_type type = json_object_get_type(obj);
         switch (type) {
@@ -49,6 +98,7 @@ void Search::parseMovieRoot() {
             case json_type_array:
                 if (strcmp(key, "results") == 0) {
                     parseMovie(obj);
+                    found = true;
                 }
                 break;
 

@@ -7,25 +7,30 @@
 
 using namespace pscrap;
 
+#define API_KEY "API_KEY"
+
+void print_search(const Search &search) {
+    printf("\nSearch results: pages: %i, total_results: %i, total_pages: %i\n",
+           search.page, search.total_results, search.total_pages);
+    for (auto &movie : search.movies) {
+        printf("\n===========================\n");
+        printf("%s\n", movie.title.c_str());
+        printf("%s\n", movie.overview.c_str());
+        printf("===========================\n");
+    }
+}
+
 int main() {
 
-    Search search("API_KEY", "Jack+Reacher");
+    Search search(API_KEY, "Jack+Reacher");
 
     int res = search.get();
-    if (res == 0) {
-        printf("=====\nSearch results\n=====\n");
-        printf("pages: %i, total_results: %i, total_pages: %i\n",
-               search.page, search.total_results, search.total_pages);
-        for (auto &movie : search.movies) {
-            printf("=====\nMovie\n=====\n");
-            printf("Title: %s\n", movie.title.c_str());
-            printf("Overview: %s\n", movie.overview.c_str());
-        }
-        // get poster
-        search.movies.at(0).getPoster("poster.jpg");
-        search.movies.at(0).getBackdrop("backdrop.jpg");
-    } else {
-        printf("main: error: search failed\n");
+    if (res == 0 && search.found) {
+        print_search(search);
+        search.save("search.bin");
+        Search loadedSearch;
+        loadedSearch.load("search.bin");
+        print_search(loadedSearch);
     }
 
     return 0;
