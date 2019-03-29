@@ -22,15 +22,17 @@ void print_search(const Search &search) {
 
 int main() {
 
-    Search search(API_KEY, "Jack+Reacher");
+    Search search(API_KEY, "Jack Reacher");
 
     int res = search.get();
     if (res == 0 && search.found) {
         print_search(search);
+#if 0
         search.save("search.bin");
         Search loadedSearch;
         loadedSearch.load("search.bin");
         print_search(loadedSearch);
+#endif
     }
 
     return 0;

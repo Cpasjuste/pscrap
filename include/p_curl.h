@@ -13,9 +13,9 @@ namespace pscrap {
 
     public:
 
-        static std::string getString(const std::string &url);
+        static std::string getString(const std::string &url, int *http_code);
 
-        static int getData(const std::string &url, const std::string &dstPath);
+        static int getData(const std::string &url, const std::string &dstPath, int *http_code);
     };
 
 }

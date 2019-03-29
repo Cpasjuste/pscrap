@@ -17,7 +17,7 @@ static size_t write_data_cb(void *buf, size_t len, size_t count, void *stream) {
     return written;
 }
 
-std::string Curl::getString(const std::string &url) {
+std::string Curl::getString(const std::string &url, int *http_code) {
 
     std::string data;
     int res = 0;
@@ -34,20 +34,24 @@ std::string Curl::getString(const std::string &url) {
     curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &data);
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
-    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3);
 
     res = curl_easy_perform(curl);
+    if (http_code) {
+        curl_easy_getinfo (curl, CURLINFO_RESPONSE_CODE, &(*http_code));
+    }
     curl_easy_cleanup(curl);
+
     if (res != 0) {
-        printf("Curl::getString: error: curl_easy_perform failed: %s\n",
-               curl_easy_strerror((CURLcode) res));
+        printf("Curl::getString: error: curl_easy_perform failed: %s, http_code: %i\n",
+               curl_easy_strerror((CURLcode) res), http_code ? *http_code : 0);
         return "";
     }
 
     return data;
 }
 
-int Curl::getData(const std::string &url, const std::string &dstPath) {
+int Curl::getData(const std::string &url, const std::string &dstPath, int *http_code) {
 
     FILE *data;
     int res = 0;
@@ -71,15 +75,18 @@ int Curl::getData(const std::string &url, const std::string &dstPath) {
     curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, data);
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
-    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3);
 
     res = curl_easy_perform(curl);
-    curl_easy_cleanup(curl);
     fclose(data);
+    if (http_code) {
+        curl_easy_getinfo (curl, CURLINFO_RESPONSE_CODE, &(*http_code));
+    }
+    curl_easy_cleanup(curl);
 
     if (res != 0) {
-        printf("Curl::getData: error: curl_easy_perform failed: %s\n",
-               curl_easy_strerror((CURLcode) res));
+        printf("Curl::getData: error: curl_easy_perform failed: %s, http_code: %i\n",
+               curl_easy_strerror((CURLcode) res), http_code ? *http_code : 0);
         remove(dstPath.c_str());
         return res;
     }

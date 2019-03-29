@@ -20,10 +20,11 @@ int Movie::getPoster(const std::string &dstPath, int width) {
     std::string url = BASE_URL + std::to_string(width) + "/" + poster_path;
     printf("Movie::getPoster: %s\n", url.c_str());
 
-    int res = Curl::getData(url, dstPath);
+    int http_code = 0;
+    int res = Curl::getData(url, dstPath, &http_code);
     if (res != 0) {
-        printf("Movie::getPoster: error: curl failed: %s\n",
-               curl_easy_strerror((CURLcode) res));
+        printf("Movie::getPoster: error: curl failed: %s, http_code: %i\n",
+               curl_easy_strerror((CURLcode) res), http_code);
         return res;
     }
 
@@ -40,10 +41,11 @@ int Movie::getBackdrop(const std::string &dstPath, int width) {
     std::string url = BASE_URL + std::to_string(width) + "/" + backdrop_path;
     printf("Movie::getBackdrop: %s\n", url.c_str());
 
-    int res = Curl::getData(url, dstPath);
+    int http_code = 0;
+    int res = Curl::getData(url, dstPath, &http_code);
     if (res != 0) {
-        printf("Movie::getBackdrop: error: curl failed: %s\n",
-               curl_easy_strerror((CURLcode) res));
+        printf("Movie::getBackdrop: error: curl failed: %s, http_code: %i\n",
+               curl_easy_strerror((CURLcode) res), http_code);
         return res;
     }
 

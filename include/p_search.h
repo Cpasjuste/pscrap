@@ -30,7 +30,7 @@ namespace pscrap {
 
         /// proceed the search
         /// return 0 on success, curl error code on error
-        int get();
+        int get(int *http_code = nullptr);
 
         /// load a saved search from a file
         int load(const std::string &srcPath);
@@ -52,6 +52,9 @@ namespace pscrap {
 
         std::string url;
         std::string data;
+        std::string search;
+        std::string api_key;
+        std::string language;
     };
 }
 

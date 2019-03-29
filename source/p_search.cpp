@@ -3,30 +3,63 @@
 //
 
 #include <cstring>
-#include <p_search.h>
-
+#include <string>
+#include <algorithm>
+#include <curl/curl.h>
 #include "p_search.h"
 #include "p_curl.h"
 
 using namespace pscrap;
 
-Search::Search(const std::string &api_key, const std::string &name, const std::string &language, Type type) {
+Search::Search(const std::string &key, const std::string &name, const std::string &lang, Type type) {
 
-    url = "https://api.themoviedb.org/3/search/movie?api_key="
-          + api_key + "&language=" + language + "&query=" + name
-          + "&page=1&include_adult=false";
+    api_key = key;
+    language = lang;
+    search = name;
+    std::replace(search.begin(), search.end(), '.', ' ');
+    std::replace(search.begin(), search.end(), '_', ' ');
+
+    CURL *curl = curl_easy_init();
+    search = curl_easy_escape(curl, search.c_str(), (int) search.length());
+    curl_easy_cleanup(curl);
 }
 
-int Search::get() {
+int Search::get(int *http_code) {
 
-    data = Curl::getString(url);
+    url = "https://api.themoviedb.org/3/search/movie?api_key="
+          + api_key + "&language=" + language + "&query=" + search
+          + "&page=1&include_adult=false";
+    printf("Search::get: %s\n", url.c_str());
 
+    data = Curl::getString(url, http_code);
     if (data.empty()) {
         printf("Search::get: error: data is empty\n");
         return -1;
     }
 
     parseMovieRoot(data);
+
+    while (total_results == 0) {
+
+        size_t pos = search.find_last_of("%20");
+        if (pos == std::string::npos) {
+            break;
+        }
+
+        search = search.substr(0, pos - 2);
+        url = "https://api.themoviedb.org/3/search/movie?api_key="
+              + api_key + "&language=" + language + "&query=" + search
+              + "&page=1&include_adult=false";
+        printf("Search::get: %s\n", url.c_str());
+
+        data = Curl::getString(url, http_code);
+        if (data.empty()) {
+            printf("Search::get: error: data is empty\n");
+            return -1;
+        }
+
+        parseMovieRoot(data);
+    }
 
     return 0;
 }
