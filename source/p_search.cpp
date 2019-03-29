@@ -18,6 +18,7 @@ Search::Search(const std::string &key, const std::string &name, const std::strin
     search = name;
     std::replace(search.begin(), search.end(), '.', ' ');
     std::replace(search.begin(), search.end(), '_', ' ');
+    std::replace(search.begin(), search.end(), '-', ' ');
 
     CURL *curl = curl_easy_init();
     search = curl_easy_escape(curl, search.c_str(), (int) search.length());
@@ -29,7 +30,7 @@ int Search::get(int *http_code) {
     url = "https://api.themoviedb.org/3/search/movie?api_key="
           + api_key + "&language=" + language + "&query=" + search
           + "&page=1&include_adult=false";
-    printf("Search::get: %s\n", url.c_str());
+    //printf("Search::get: %s\n", url.c_str());
 
     data = Curl::getString(url, http_code);
     if (data.empty()) {
@@ -50,7 +51,6 @@ int Search::get(int *http_code) {
         url = "https://api.themoviedb.org/3/search/movie?api_key="
               + api_key + "&language=" + language + "&query=" + search
               + "&page=1&include_adult=false";
-        printf("Search::get: %s\n", url.c_str());
 
         data = Curl::getString(url, http_code);
         if (data.empty()) {
