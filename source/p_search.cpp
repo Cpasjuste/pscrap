@@ -41,12 +41,12 @@ int Search::get(int *http_code) {
 
     while (total_results == 0) {
 
-        size_t pos = search.find_last_of("%20");
+        size_t pos = search.rfind("%20");
         if (pos == std::string::npos) {
             break;
         }
 
-        search = search.substr(0, pos - 2);
+        search = search.substr(0, pos);
         url = "https://api.themoviedb.org/3/search/movie?api_key="
               + api_key + "&language=" + language + "&query=" + search
               + "&page=1&include_adult=false";
@@ -131,7 +131,9 @@ void Search::parseMovieRoot(const std::string &jsonData) {
             case json_type_array:
                 if (strcmp(key, "results") == 0) {
                     parseMovie(obj);
-                    found = true;
+                    if (!movies.empty()) {
+                        found = true;
+                    }
                 }
                 break;
 
