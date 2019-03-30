@@ -42,7 +42,6 @@ namespace pscrap {
         int total_results = 0;
         int total_pages = 0;
         std::vector<Movie> movies;
-        bool found = false;
 
     private:
 

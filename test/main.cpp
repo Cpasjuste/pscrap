@@ -25,7 +25,7 @@ int main() {
     Search search(API_KEY, "Jack Reacher");
 
     int res = search.get();
-    if (res == 0 && search.found) {
+    if (res == 0 && search.total_results > 0) {
         print_search(search);
 #if 0
         search.save("search.bin");

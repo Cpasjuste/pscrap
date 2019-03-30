@@ -96,11 +96,6 @@ int Search::load(const std::string &srcPath) {
 
 int Search::save(const std::string &dstPath) {
 
-    if (!found) {
-        printf("Search::save: error: data is empty\n");
-        return -1;
-    }
-
     FILE *fp = fopen(dstPath.c_str(), "wb");
     if (!fp) {
         printf("Search::save: error: fopen failed\n");
@@ -131,9 +126,6 @@ void Search::parseMovieRoot(const std::string &jsonData) {
             case json_type_array:
                 if (strcmp(key, "results") == 0) {
                     parseMovie(obj);
-                    if (!movies.empty()) {
-                        found = true;
-                    }
                 }
                 break;
 
