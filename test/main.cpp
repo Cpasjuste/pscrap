@@ -7,8 +7,6 @@
 
 using namespace pscrap;
 
-#define API_KEY "API_KEY"
-
 void print_search(const Search &search) {
     printf("\nSearch results: pages: %i, total_results: %i, total_pages: %i\n",
            search.page, search.total_results, search.total_pages);

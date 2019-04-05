@@ -16,17 +16,9 @@ project(pscrap)
 ##############
 # PSCRAP
 ##############
-set(INCLUDES
-        include
-        )
-
-file(GLOB SOURCES
-        source/*.c*
-        )
-
-set(CFLAGS
-        )
-
+set(INCLUDES include)
+file(GLOB SOURCES source/*.c*)
+set(CFLAGS)
 set(LDFLAGS curl json-c z)
 
 #####################
@@ -53,11 +45,13 @@ endif ()
 add_library(${PROJECT_NAME} ${SOURCES})
 target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDES})
 target_compile_options(${PROJECT_NAME} PRIVATE ${CFLAGS})
-target_compile_options(${PROJECT_NAME} PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>)
 target_link_libraries(${PROJECT_NAME} PUBLIC ${LDFLAGS})
 
 #####################
 # PSCRAP TEST
 #####################
+# read tmdb api key
+file(STRINGS "tmdb.key" TMDB_API_KEY)
 add_executable(${PROJECT_NAME}.elf test/main.cpp)
+target_compile_options(${PROJECT_NAME}.elf PRIVATE -DAPI_KEY=\"${TMDB_API_KEY}\")
 target_link_libraries(${PROJECT_NAME}.elf ${PROJECT_NAME})
