@@ -42,16 +42,17 @@ endif ()
 #####################
 # PSCRAP LIBRARY
 #####################
+# read tmdb api key from file, required
+file(STRINGS "tmdb.key" TMDB_API_KEY)
 add_library(${PROJECT_NAME} ${SOURCES})
 target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDES})
+target_compile_options(${PROJECT_NAME} PUBLIC -DAPI_KEY=\"${TMDB_API_KEY}\")
 target_compile_options(${PROJECT_NAME} PRIVATE ${CFLAGS})
 target_link_libraries(${PROJECT_NAME} PUBLIC ${LDFLAGS})
 
 #####################
 # PSCRAP TEST
 #####################
-# read tmdb api key
-file(STRINGS "tmdb.key" TMDB_API_KEY)
 add_executable(${PROJECT_NAME}.elf test/main.cpp)
-target_compile_options(${PROJECT_NAME}.elf PRIVATE -DAPI_KEY=\"${TMDB_API_KEY}\")
+target_compile_options(${PROJECT_NAME}.elf PUBLIC -DAPI_KEY=\"${TMDB_API_KEY}\")
 target_link_libraries(${PROJECT_NAME}.elf ${PROJECT_NAME})

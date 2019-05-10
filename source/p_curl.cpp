@@ -35,6 +35,10 @@ std::string Curl::getString(const std::string &url, int *http_code) {
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &data);
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3);
+#ifdef __SWITCH__
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0);
+#endif
 
     res = curl_easy_perform(curl);
     if (http_code) {
@@ -76,6 +80,10 @@ int Curl::getData(const std::string &url, const std::string &dstPath, int *http_
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, data);
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3);
+#ifdef __SWITCH__
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0);
+#endif
 
     res = curl_easy_perform(curl);
     fclose(data);
