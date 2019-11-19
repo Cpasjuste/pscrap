@@ -18,10 +18,15 @@ project(pscrap)
 ##############
 # PSCRAP
 ##############
-set(INCLUDES include)
+set(CMAKE_MODULE_PATH cmake)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
+find_package(CURL REQUIRED)
+find_package(JSON-C REQUIRED)
+find_package(ZLIB REQUIRED)
+
 file(GLOB SOURCES source/*.c*)
-set(CFLAGS)
-set(LDFLAGS curl json-c z)
+set(INCLUDES include ${CURL_INCLUDE_DIRS} ${JSON-C_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS})
+set(LDFLAGS ${CURL_LIBRARIES} ${JSON-C_LIBRARIES} ${ZLIB_LIBRARIES})
 
 #####################
 # PLATORM SPECIFIC
