@@ -1,13 +1,15 @@
 cmake_minimum_required(VERSION 3.0)
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 
-# delete cmake cache folder before changing this options
-option(BUILD_LINUX "Build with SDL2 support" OFF)
-option(BUILD_WINDOWS "Build with Windows support (msys/mingw64)" OFF)
-option(BUILD_VITA "Build with Ps Vita support (hardware rendering, fast)" OFF)
-option(BUILD_PS3 "Build with PS3 support (hardware rendering, fast)" OFF)
-option(BUILD_3DS "Build with 3DS support" OFF)
-option(BUILD_SWITCH "Build with Nintendo Switch support" OFF)
+####################
+# TARGET PLATFORM
+####################
+option(PLATFORM_LINUX "Linux platform target" OFF)
+option(PLATFORM_WINDOWS "Windows platform target (msys/mingw64)" OFF)
+option(PLATFORM_RPI3 "RIP3 platform target" OFF)
+option(PLATFORM_SWITCH "Nintendo Switch platform target" OFF)
+option(PLATFORM_3DS "Nintendo 3DS platform target" OFF)
+option(PLATFORM_VITA "Sony PS Vita platform target" OFF)
 
 include(Toolchain.cmake)
 
@@ -24,7 +26,7 @@ set(LDFLAGS curl json-c z)
 #####################
 # PLATORM SPECIFIC
 #####################
-if (BUILD_SWITCH)
+if (PLATFORM_SWITCH)
     #####################
     # SWITCH PLATORM
     #####################
