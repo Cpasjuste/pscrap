@@ -49,9 +49,12 @@ namespace pscrap {
 
         void parseMovie(json_object *obj);
 
+        static bool sortByTitleDistance(const Movie &movie1, const Movie &movie2, const std::string &title);
+
         std::string url;
         std::string data;
         std::string search;
+        std::string search_escaped;
         std::string api_key;
         std::string language;
     };

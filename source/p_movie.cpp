@@ -17,7 +17,7 @@ int Movie::getPoster(const std::string &dstPath, int width) {
         return -1;
     }
 
-    std::string url = BASE_URL + std::to_string(width) + "/" + poster_path;
+    std::string url = BASE_URL + std::to_string(width) + poster_path;
     printf("Movie::getPoster: %s\n", url.c_str());
 
     int http_code = 0;
@@ -38,7 +38,7 @@ int Movie::getBackdrop(const std::string &dstPath, int width) {
         return -1;
     }
 
-    std::string url = BASE_URL + std::to_string(width) + "/" + backdrop_path;
+    std::string url = BASE_URL + std::to_string(width) + backdrop_path;
     printf("Movie::getBackdrop: %s\n", url.c_str());
 
     int http_code = 0;
