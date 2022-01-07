@@ -6,10 +6,10 @@ cmake_minimum_required(VERSION 3.0)
 ####################
 option(PLATFORM_LINUX "Linux platform target" OFF)
 option(PLATFORM_WINDOWS "Windows platform target (msys/mingw64)" OFF)
-option(PLATFORM_RPI3 "RIP3 platform target" OFF)
 option(PLATFORM_SWITCH "Nintendo Switch platform target" OFF)
 option(PLATFORM_3DS "Nintendo 3DS platform target" OFF)
 option(PLATFORM_VITA "Sony PS Vita platform target" OFF)
+option(PLATFORM_PS4 "Sony PS Vita platform target" OFF)
 
 include(Toolchain.cmake)
 
@@ -38,7 +38,9 @@ if (PLATFORM_SWITCH)
     list(APPEND CFLAGS -D__SWITCH__)
     list(APPEND INCLUDES)
     list(APPEND LDFLAGS mbedtls mbedcrypto mbedx509 nx)
-elseif (BUILD_LINUX)
+elseif (PLATFORM_PS4)
+    list(APPEND LDFLAGS json-c mbedtls mbedcrypto mbedx509 SceNet)
+elseif (PLATFORM_LINUX)
     #####################
     # LINUX PLATORM
     #####################
